@@ -37,8 +37,8 @@ public class PlayerMovement : MonoBehaviour
         camForward.y = 0;
         camRight.y = 0;
 
-        camForward.Normalize();
-        camRight.Normalize();
+        //camForward.Normalize();
+        //camRight.Normalize(); Not necessary
 
         Vector3 moveDir = camForward * _moveInput.z + camRight * _moveInput.x;
 
