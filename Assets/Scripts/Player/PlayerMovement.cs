@@ -1,9 +1,12 @@
 using UnityEngine;
+using static PlayerActions;
 
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] private float _speed = 5;
+    [SerializeField] private float _speed = 5f;
+    [SerializeField] private float _jumpForce = 15f;
+    private bool _jumped = false;
 
     private PlayerActions _playerActions;
     private Rigidbody _rb;
@@ -17,6 +20,29 @@ public class PlayerMovement : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
     }
 
+    private void Start()
+    {
+        //OnEnable();
+        _playerActions.Player_Map.Jump.performed += Jump_performed;
+        _playerActions.Player_Map.Jump.canceled += Jump_canceled;
+    }
+
+    private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        _jumped = true;
+        _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+        Debug.Log("Jumped");
+    }
+
+    private void Jump_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    {
+        if (_jumped == false)
+        {
+            var forceEffect = obj.duration;
+            _rb.AddForce(Vector3.up * (_jumpForce * (float)forceEffect), ForceMode.Impulse);
+        }
+    }
+
     private void OnEnable()
     {
         _playerActions.Player_Map.Enable();
@@ -26,6 +52,7 @@ public class PlayerMovement : MonoBehaviour
     {
         _playerActions.Player_Map.Disable();
     }
+
 
     private void FixedUpdate()
     {
@@ -37,9 +64,6 @@ public class PlayerMovement : MonoBehaviour
         camForward.y = 0;
         camRight.y = 0;
 
-        //camForward.Normalize();
-        //camRight.Normalize(); Not necessary
-
         Vector3 moveDir = camForward * _moveInput.z + camRight * _moveInput.x;
 
         if (moveDir.sqrMagnitude > 0.01f)
@@ -47,6 +71,10 @@ public class PlayerMovement : MonoBehaviour
             transform.forward = moveDir;
         }
 
-        _rb.linearVelocity = moveDir * _speed;
+        if (!_jumped) 
+        {
+            _rb.linearVelocity = moveDir * _speed + Vector3.up * _rb.linearVelocity.y;
+        }
+
     }
 }

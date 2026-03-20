@@ -23,6 +23,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Attack",
+                    "type": "Button",
+                    "id": "c8dc35a5-4cf5-4367-a3dc-470674aa45aa",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -85,10 +94,21 @@
                     "name": "",
                     "id": "c3c235d6-e835-4465-a4ff-c8f67d118f9e",
                     "path": "<Keyboard>/space",
-                    "interactions": "",
+                    "interactions": "Hold(duration=1)",
                     "processors": "",
                     "groups": "",
                     "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e81bd392-8b3d-41ee-960c-ff05ec1961c2",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

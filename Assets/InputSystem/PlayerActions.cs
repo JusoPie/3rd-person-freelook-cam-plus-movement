@@ -109,6 +109,15 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""c8dc35a5-4cf5-4367-a3dc-470674aa45aa"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -171,10 +180,21 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""c3c235d6-e835-4465-a4ff-c8f67d118f9e"",
                     ""path"": ""<Keyboard>/space"",
-                    ""interactions"": """",
+                    ""interactions"": ""Hold(duration=1)"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e81bd392-8b3d-41ee-960c-ff05ec1961c2"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -187,6 +207,7 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         m_Player_Map = asset.FindActionMap("Player_Map", throwIfNotFound: true);
         m_Player_Map_Move = m_Player_Map.FindAction("Move", throwIfNotFound: true);
         m_Player_Map_Jump = m_Player_Map.FindAction("Jump", throwIfNotFound: true);
+        m_Player_Map_Attack = m_Player_Map.FindAction("Attack", throwIfNotFound: true);
     }
 
     ~@PlayerActions()
@@ -269,6 +290,7 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
     private List<IPlayer_MapActions> m_Player_MapActionsCallbackInterfaces = new List<IPlayer_MapActions>();
     private readonly InputAction m_Player_Map_Move;
     private readonly InputAction m_Player_Map_Jump;
+    private readonly InputAction m_Player_Map_Attack;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player_Map".
     /// </summary>
@@ -288,6 +310,10 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player_Map/Jump".
         /// </summary>
         public InputAction @Jump => m_Wrapper.m_Player_Map_Jump;
+        /// <summary>
+        /// Provides access to the underlying input action "Player_Map/Attack".
+        /// </summary>
+        public InputAction @Attack => m_Wrapper.m_Player_Map_Attack;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -320,6 +346,9 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
+            @Attack.started += instance.OnAttack;
+            @Attack.performed += instance.OnAttack;
+            @Attack.canceled += instance.OnAttack;
         }
 
         /// <summary>
@@ -337,6 +366,9 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
+            @Attack.started -= instance.OnAttack;
+            @Attack.performed -= instance.OnAttack;
+            @Attack.canceled -= instance.OnAttack;
         }
 
         /// <summary>
@@ -391,5 +423,12 @@ public partial class @PlayerActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnJump(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Attack" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAttack(InputAction.CallbackContext context);
     }
 }
