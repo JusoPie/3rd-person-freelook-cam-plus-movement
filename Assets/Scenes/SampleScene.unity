@@ -306,7 +306,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 263821823}
   serializedVersion: 5
-  m_Mass: 5
+  m_Mass: 10
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -338,7 +338,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   _speed: 5
-  _jumpForce: 15
+  _jumpForce: 60
+  _loadingJump: 0
   camTransform: {fileID: 743276783}
 --- !u!1 &330585543
 GameObject:

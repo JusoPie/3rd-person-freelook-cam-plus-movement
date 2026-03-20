@@ -1,80 +1,84 @@
 using UnityEngine;
-using static PlayerActions;
+using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float _speed = 5f;
     [SerializeField] private float _jumpForce = 15f;
-    private bool _jumped = false;
+    [SerializeField] private bool _loadingJump = false;
 
-    private PlayerActions _playerActions;
     private Rigidbody _rb;
-    private Vector3 _moveInput;
 
-    public Transform camTransform;
+    public Transform camTransform; // Free form camera
+
+    //Just get specific actions for now
+    InputAction moveAction; 
+    InputAction jumpAction;
 
     private void Awake()
     {
-        _playerActions = new PlayerActions();
         _rb = GetComponent<Rigidbody>();
     }
 
     private void Start()
     {
-        //OnEnable();
-        _playerActions.Player_Map.Jump.performed += Jump_performed;
-        _playerActions.Player_Map.Jump.canceled += Jump_canceled;
+        moveAction = InputSystem.actions.FindAction("Move");
+        jumpAction = InputSystem.actions.FindAction("Jump");
+        jumpAction.started += JumpAction_started;
+        jumpAction.performed += JumpAction_performed;
+        jumpAction.canceled += JumpAction_canceled;
     }
 
-    private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    
+
+    private void JumpAction_started(InputAction.CallbackContext context)
     {
-        _jumped = true;
-        _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
-        Debug.Log("Jumped");
+        _loadingJump = true;
+        moveAction.Disable();
     }
 
-    private void Jump_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void JumpAction_performed(InputAction.CallbackContext context)
     {
-        if (_jumped == false)
+        _loadingJump = false;
+        moveAction.Enable();
+        var forceEffect = context.duration * 2;
+        _rb.AddForce(Vector3.up * (_jumpForce * (float)forceEffect), ForceMode.Impulse);    
+    }
+
+    private void JumpAction_canceled(InputAction.CallbackContext context)
+    {
+        if (_loadingJump == true) 
         {
-            var forceEffect = obj.duration;
-            _rb.AddForce(Vector3.up * (_jumpForce * (float)forceEffect), ForceMode.Impulse);
+            _loadingJump = false;
+            moveAction.Enable();
+            _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);  
         }
+        
     }
-
-    private void OnEnable()
-    {
-        _playerActions.Player_Map.Enable();
-    }
-
-    private void OnDisable()
-    {
-        _playerActions.Player_Map.Disable();
-    }
-
 
     private void FixedUpdate()
     {
-        _moveInput = _playerActions.Player_Map.Move.ReadValue<Vector3>();
+        Vector3 moveValue = moveAction.ReadValue<Vector3>(); //Reads value from Player_Map.Move
 
+        //Set Camera rotation to own variables
         Vector3 camForward = camTransform.forward;
         Vector3 camRight = camTransform.right;
 
+        //reset cam y transforms
         camForward.y = 0;
         camRight.y = 0;
 
-        Vector3 moveDir = camForward * _moveInput.z + camRight * _moveInput.x;
+        //Player direction depending on the camera angle in 2D plane
+        Vector3 moveDir = camForward * moveValue.z + camRight * moveValue.x;
 
         if (moveDir.sqrMagnitude > 0.01f)
         {
             transform.forward = moveDir;
         }
 
-        if (!_jumped) 
-        {
-            _rb.linearVelocity = moveDir * _speed + Vector3.up * _rb.linearVelocity.y;
-        }
+        //Move player
+        _rb.linearVelocity = moveDir * _speed + Vector3.up * _rb.linearVelocity.y;
 
     }
 }
