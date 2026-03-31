@@ -24,10 +24,14 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         moveAction = InputSystem.actions.FindAction("Move");
+        moveAction.Enable();
         jumpAction = InputSystem.actions.FindAction("Jump");
+        jumpAction.Enable();
         jumpAction.started += JumpAction_started;
         jumpAction.performed += JumpAction_performed;
         jumpAction.canceled += JumpAction_canceled;
+        Debug.Log("Input enabled");
+
     }
 
     
