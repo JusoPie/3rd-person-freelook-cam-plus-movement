@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _speed = 5f;
     [SerializeField] private float _jumpForce = 15f;
     [SerializeField] private bool _loadingJump = false;
+    [SerializeField] private bool _isAirborne = false;
 
     private Rigidbody _rb;
 
@@ -19,14 +20,14 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
-    }
-
-    private void Start()
-    {
         moveAction = InputSystem.actions.FindAction("Move");
         moveAction.Enable();
         jumpAction = InputSystem.actions.FindAction("Jump");
         jumpAction.Enable();
+    }
+
+    private void Start()
+    {
         jumpAction.started += JumpAction_started;
         jumpAction.performed += JumpAction_performed;
         jumpAction.canceled += JumpAction_canceled;
@@ -34,12 +35,20 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-    
+
 
     private void JumpAction_started(InputAction.CallbackContext context)
     {
-        _loadingJump = true;
-        moveAction.Disable();
+        if (_isAirborne)
+        {
+            return;
+        }
+
+        else
+        {
+            _loadingJump = true;
+            moveAction.Disable();
+        }
     }
 
     private void JumpAction_performed(InputAction.CallbackContext context)
@@ -63,6 +72,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        
+
         Vector3 moveValue = moveAction.ReadValue<Vector3>(); //Reads value from Player_Map.Move
 
         //Set Camera rotation to own variables
@@ -85,4 +96,5 @@ public class PlayerMovement : MonoBehaviour
         _rb.linearVelocity = moveDir * _speed + Vector3.up * _rb.linearVelocity.y;
 
     }
+
 }
